@@ -16,15 +16,19 @@
 ## 1. 帯と見出し面
 
 ```html
-<header class="ot-topbar">組織名 <strong>システム名</strong></header>
-<div class="ot-hero">
-  <h1 class="ot-hero__title">画面名</h1>
-  <p class="ot-hero__lead">この画面でできることを1文で。</p>
-  <span class="ot-hero__pattern" aria-hidden="true"></span>
+<div class="ot-theme">                 <!-- テーマのルート：この画面のいちばん外側の要素 -->
+  <header class="ot-topbar">組織名 <strong>システム名</strong></header>
+  <div class="ot-hero">
+    <h1 class="ot-hero__title">画面名</h1>
+    <p class="ot-hero__lead">この画面でできることを1文で。</p>
+    <span class="ot-hero__pattern" aria-hidden="true"></span>
+  </div>
+  …（本文・章など。以下の例はすべてこの中に置く）
 </div>
 ```
 
 ```css
+.ot-theme { background: var(--ot-ground); color: var(--ot-text); font-family: var(--ot-font-gothic); line-height: var(--ot-line-height); }
 .ot-topbar { background: var(--ot-topbar); color: var(--ot-text); padding: 10px 24px; border-bottom: 1px solid var(--ot-line); }
 .ot-hero { position: relative; background: var(--ot-hero); padding: 28px 24px; overflow: hidden; }
 .ot-hero__title { font-family: var(--ot-font-mincho); font-size: 28px; }
@@ -35,6 +39,8 @@
 ```
 
 小さな画面では見出し面を低くし、模様を省いてよい。
+
+テーマを当てる画面のいちばん外側の要素に `.ot-theme` を付ける。属性や疑似クラスで当てる規則（選択のチェック、フォーカスの枠など）は、`.ot-theme` の中だけに効かせる（6 を参照）。`tokens.css` の変数も `:root` から `.ot-theme` に移せば、この中だけに効く。
 
 ## 2. 本文の格子帯
 
@@ -111,11 +117,12 @@
 .ot-primary { background: var(--ot-cream); color: var(--ot-ground); border: 1px solid var(--ot-cream); font-weight: 700; padding: 8px 18px; }
 .ot-secondary { background: transparent; color: var(--ot-text); border: 1px solid var(--ot-thread); padding: 8px 14px; }
 .ot-textlink { color: var(--ot-text); text-decoration: underline; background: none; border: 0; }
+/* 選択・フォーカスは属性や疑似クラスで当てるので、テーマのルート（.ot-theme）の中だけに効かせる（テーマの外のボタンにチェックや枠を付けない） */
 /* 選択：塗り＋チェック＋太字 */
-[aria-pressed="true"], [aria-selected="true"] { background: var(--ot-cream); color: var(--ot-ground); font-weight: 700; }
-[aria-pressed="true"]::before, [aria-selected="true"]::before { content: '✓ '; }
+.ot-theme :is([aria-pressed="true"], [aria-selected="true"]) { background: var(--ot-cream); color: var(--ot-ground); font-weight: 700; }
+.ot-theme :is([aria-pressed="true"], [aria-selected="true"])::before { content: '✓ '; }
 /* フォーカス：選択とは別の色と形。プログラムで移した tabindex="-1" の要素にも */
-:focus-visible, [tabindex="-1"]:focus { outline: var(--ot-focus-ring); outline-offset: 2px; box-shadow: 0 0 0 2px var(--ot-ground); }
+.ot-theme :is(:focus-visible, [tabindex="-1"]:focus) { outline: var(--ot-focus-ring); outline-offset: 2px; box-shadow: 0 0 0 2px var(--ot-ground); }
 /* エラー */
 .ot-field--error input, .ot-field--error textarea { border: 3px solid var(--ot-error-line); }
 .ot-error { color: var(--ot-error); font-weight: 700; } /* 「エラー：」で始め、理由と直し方を書く */
