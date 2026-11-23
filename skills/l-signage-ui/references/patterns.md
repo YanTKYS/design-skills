@@ -111,7 +111,12 @@ function renderStates(counts, selected) {
 
 ```html
 <table class="ls-table">
-  <thead><tr><th scope="col" aria-sort="ascending"><button type="button" class="ls-sort">番号<span aria-hidden="true">↑</span></button></th> … <th scope="col"><span class="visually-hidden">操作</span></th></tr></thead>
+  <thead><tr>
+    <th scope="col" class="is-sortable" data-key="no" aria-sort="ascending"><button type="button" class="ls-sort">番号<span aria-hidden="true">↑</span></button></th>
+    <th scope="col">用件</th> …
+    <th scope="col" class="is-sortable" data-key="issued"><button type="button" class="ls-sort">発行<span aria-hidden="true">↕</span></button></th>
+    <th scope="col"><span class="visually-hidden">操作</span></th>
+  </tr></thead>
   <tbody>
     <tr class="ls-row is-open"> …
       <td><button type="button" aria-expanded="true" aria-controls="detail">閉じる</button></td></tr>
@@ -137,7 +142,21 @@ function renderStates(counts, selected) {
 .ls-detail dt { font-size: 12px; color: var(--ls-amber); }
 ```
 
-並べ替えで表を描き直したら、押した見出しのボタンへフォーカスを戻す。並べ替えできない列の `th` には `aria-sort` を付けない（8 で隠すため）。
+並べ替えで表を描き直したら、押した見出しのボタンへフォーカスを戻す。
+
+- 並べ替えできる列の `th` には `is-sortable` のクラスを付ける（並べ替えできるかどうか）。`aria-sort` は今並べ替えている列の `th` にだけ付け（`ascending`／`descending`）、ほかの列からは外す（今の並べ替えの状態）。狭い幅では `is-sortable` の見出しだけを札として残し、今並べ替えている札だけを強調する（8 を参照）。
+
+```js
+// 並べ替えている列の th にだけ aria-sort を付け、ほかの並べ替えできる列からは外す（同時に2列に付けない）。矢印も同じ状態から描く
+function renderSortHeads(table, key, dir) {
+  for (const th of table.querySelectorAll('th.is-sortable')) {
+    const on = th.dataset.key === key;
+    if (on) th.setAttribute('aria-sort', dir === 'asc' ? 'ascending' : 'descending');
+    else th.removeAttribute('aria-sort');
+    th.querySelector('[aria-hidden="true"]').textContent = on ? (dir === 'asc' ? '↑' : '↓') : '↕';
+  }
+}
+```
 
 ## 5. 手順のフォーム（現在の手順・琥珀の罫・章名の枝・次の手順）
 
@@ -261,9 +280,9 @@ function ticks(n, max) {
   .ls-table thead tr { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 8px 12px; background: var(--ls-bar); }
   .ls-table thead tr::before { content: '並べ替え'; font-size: 13px; color: var(--ls-muted); }
   .ls-table th { padding: 0; background: none; }
-  .ls-table th:not([aria-sort]) { display: none; }
+  .ls-table th:not(.is-sortable) { display: none; } /* 並べ替えできない列の見出しは札にしない */
   .ls-sort { min-height: 32px; padding: 2px 10px; border: 1px solid #5b6258; font-size: 13px; }
-  .ls-table th:not([aria-sort='none']) .ls-sort { background: var(--ls-amber); color: var(--ls-ink); border-color: var(--ls-amber); }
+  .ls-table th:is([aria-sort='ascending'], [aria-sort='descending']) .ls-sort { background: var(--ls-amber); color: var(--ls-ink); border-color: var(--ls-amber); } /* 今並べ替えている札だけ */
   .ls-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; padding: 12px; border-bottom: 1px solid var(--ls-row); }
   .ls-table td { padding: 0; border: 0; }
   .ls-row.is-open { background: var(--ls-amber); color: var(--ls-ink); font-weight: 700; border-bottom: 0; }

@@ -80,8 +80,10 @@ body { margin: 0; background: var(--jr-paper); color: var(--jr-ink); font: var(-
 ```html
 <table class="jr-table"><caption class="visually-hidden">備品の一覧（12点中12点）。列見出しのボタンで並べ替えできます。</caption>
   <thead><tr>
-    <th scope="col" aria-sort="ascending"><button type="button" class="jr-sort">管理番号<span aria-hidden="true">↑</span></button></th>
-    …<th scope="col"><span class="visually-hidden">操作</span></th>
+    <th scope="col" class="is-sortable" data-key="id" aria-sort="ascending"><button type="button" class="jr-sort">管理番号<span aria-hidden="true">↑</span></button></th>
+    <th scope="col">備品名</th> …
+    <th scope="col" class="is-sortable" data-key="due"><button type="button" class="jr-sort">返却予定<span aria-hidden="true">↕</span></button></th>
+    <th scope="col"><span class="visually-hidden">操作</span></th>
   </tr></thead>
   <tbody>
     <tr class="jr-row is-open">
@@ -123,7 +125,20 @@ body { margin: 0; background: var(--jr-paper); color: var(--jr-ink); font: var(-
 
   枠のない塗りだけのボタンには `border: 2px solid transparent` を付けておく（強制カラーでは枠が見える色に置き換わる）。
 - 列は「番号 → 名前 → 区分 → 日付 → 状態 → 操作」を基本に、業務に合わせる。状態のセルは記号と文字（`<span aria-hidden="true">●</span>貸出中`）。
-- 並べ替えは `th[aria-sort]` と列見出しのボタンだけ。別の並べ替えの部品を作らない。並べ替えできない列の `th` には `aria-sort` を付けない（狭い幅では `th[aria-sort]` だけを札として残すため。7 を参照）。
+- 並べ替えは列見出しのボタンだけ。別の並べ替えの部品を作らない。
+- 並べ替えできる列の `th` には `is-sortable` のクラスを付ける（並べ替えできるかどうか）。`aria-sort` は今並べ替えている列の `th` にだけ付け（`ascending`／`descending`）、ほかの列からは外す（今の並べ替えの状態）。狭い幅では `is-sortable` の見出しだけを札として残し、今並べ替えている札だけを強調する（7 を参照）。
+
+```js
+// 並べ替えている列の th にだけ aria-sort を付け、ほかの並べ替えできる列からは外す（同時に2列に付けない）。矢印も同じ状態から描く
+function renderSortHeads(table, key, dir) {
+  for (const th of table.querySelectorAll('th.is-sortable')) {
+    const on = th.dataset.key === key;
+    if (on) th.setAttribute('aria-sort', dir === 'asc' ? 'ascending' : 'descending');
+    else th.removeAttribute('aria-sort');
+    th.querySelector('[aria-hidden="true"]').textContent = on ? (dir === 'asc' ? '↑' : '↓') : '↕';
+  }
+}
+```
 
 ## 4. 章と入力欄
 
@@ -219,9 +234,9 @@ body { margin: 0; background: var(--jr-paper); color: var(--jr-ink); font: var(-
   .jr-table thead tr { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 10px 0; border-top: var(--jr-rule); border-bottom: var(--jr-rule); }
   .jr-table thead tr::before { content: '並べ替え'; font-size: 13px; font-weight: var(--jr-weight-strong); }
   .jr-table th { padding: 0; border: 0; }
-  .jr-table th:not([aria-sort]) { display: none; } /* 並べ替えできない列（区分・状態・操作など）の見出しは札にしない */
+  .jr-table th:not(.is-sortable) { display: none; } /* 並べ替えできない列（区分・状態・操作など）の見出しは札にしない */
   .jr-sort { min-height: 32px; padding: 2px 10px; border: 2px solid var(--jr-blue); border-radius: var(--jr-pill); font-size: 13px; }
-  .jr-table th[aria-sort]:not([aria-sort='none']) .jr-sort { background: var(--jr-blue); color: var(--jr-on-blue); }
+  .jr-table th:is([aria-sort='ascending'], [aria-sort='descending']) .jr-sort { background: var(--jr-blue); color: var(--jr-on-blue); } /* 今並べ替えている札だけ */
   .jr-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; padding: 12px 10px; border-bottom: var(--jr-dot-rule); }
   .jr-table td { padding: 0; border: 0; }
   .jr-act { grid-column: 2; grid-row: 1; }

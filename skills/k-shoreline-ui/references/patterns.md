@@ -67,8 +67,9 @@ body { margin: 0; background: var(--k-ground); color: var(--k-ink); font: var(--
 <div class="k-work has-rows">                       <!-- 表と右の列をまとめる（position: relative） -->
   <table class="k-table">
     <thead><tr>
-      <th scope="col" aria-sort="ascending"><button type="button" class="k-sort">番号<span aria-hidden="true">↑</span></button></th>
+      <th scope="col" class="is-sortable" data-key="id" aria-sort="ascending"><button type="button" class="k-sort">番号<span aria-hidden="true">↑</span></button></th>
       <th scope="col">件名</th> …
+      <th scope="col" class="is-sortable" data-key="due"><button type="button" class="k-sort">回答期限<span aria-hidden="true"></span></button></th>
       <th scope="col" class="k-col-act"><span class="visually-hidden">操作</span></th>
     </tr></thead>
     <tbody>
@@ -99,6 +100,9 @@ body { margin: 0; background: var(--k-ground); color: var(--k-ink); font: var(--
 .k-table { width: 100%; border-collapse: collapse; }
 .k-table th { padding: 8px; text-align: left; font-size: 13px; font-weight: 400; color: var(--k-muted); border-top: 1px solid var(--k-line); border-bottom: 1px solid var(--k-line); }
 .k-table td { padding: 14px 8px; border-bottom: 1px solid var(--k-row); vertical-align: middle; }
+.k-sort { padding: 0; background: none; border: 0; color: inherit; font: inherit; cursor: pointer; white-space: nowrap; }
+.k-sort span { margin-left: 4px; }
+.k-table th:is([aria-sort='ascending'], [aria-sort='descending']) .k-sort { color: var(--k-ink); font-weight: 700; } /* 今並べ替えている列 */
 .k-id { font-family: var(--k-mono); font-size: 13.5px; white-space: nowrap; }
 :is(.k-col-act, .k-act) { width: 6.5em; white-space: nowrap; } /* 「詳細 ›」⇔「閉じる ×」で列の幅が変わらないように */
 /* 選んだ行：陸の面＋左の濃い緑の線＋「表示中」 */
@@ -133,6 +137,20 @@ body { margin: 0; background: var(--k-ground); color: var(--k-ink); font: var(--
 
 - `top` は表の上端に合わせる（表の上に見出しの行があるなら、その高さ分を下げる）。
 - 開いたら詳細の見出しへ、閉じたら開閉ボタンへフォーカスを移す。並べ替え・絞り込みで表を描き直したら、操作したボタンへフォーカスを戻す。
+- 並べ替えできる列の `th` には `is-sortable` のクラスを付ける（並べ替えできるかどうか）。`aria-sort` は今並べ替えている列の `th` にだけ付け（`ascending`／`descending`）、ほかの列からは外す（今の並べ替えの状態）。狭い幅では `is-sortable` の見出しだけを札として残し、今並べ替えている札だけを強調する（7 を参照）。
+
+```js
+// 並べ替えている列の th にだけ aria-sort を付け、ほかの並べ替えできる列からは外す（同時に2列に付けない）。矢印も同じ状態から描く
+function renderSortHeads(table, key, dir) {
+  for (const th of table.querySelectorAll('th.is-sortable')) {
+    const on = th.dataset.key === key;
+    if (on) th.setAttribute('aria-sort', dir === 'asc' ? 'ascending' : 'descending');
+    else th.removeAttribute('aria-sort');
+    th.querySelector('[aria-hidden="true"]').textContent = on ? (dir === 'asc' ? '↑' : '↓') : '';
+  }
+}
+```
+
 - 右の列が合わない業務では、`@media (min-width: 1000px)` の部分を使わない（行の直下に開くだけになる）。
 
 ## 4. 章の陸と水際（汀線の曲線）
@@ -258,7 +276,9 @@ function curve(pts) {
   .k-table thead tr { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; padding: 8px 4px; border-top: 1px solid var(--k-line); border-bottom: 1px solid var(--k-line); }
   .k-table thead tr::before { content: '並べ替え'; font-size: 13px; color: var(--k-muted); }
   .k-table th { padding: 0; border: 0; }
-  .k-table th:not([aria-sort]) { display: none; } /* 並べ替えできない列の見出しは札にしない */
+  .k-table th:not(.is-sortable) { display: none; } /* 並べ替えできない列の見出しは札にしない */
+  .k-sort { min-height: 32px; padding: 2px 6px; border-bottom: 1px solid var(--k-line); }
+  .k-table th:is([aria-sort='ascending'], [aria-sort='descending']) .k-sort { background: var(--k-land); border-bottom: 3px solid var(--k-green); } /* 今並べ替えている札だけ */
   .k-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; padding: 12px 8px; border-bottom: 1px solid var(--k-row); }
   .k-table td { padding: 0; border: 0; }
   .k-act { grid-column: 2; grid-row: 1; }
@@ -277,7 +297,7 @@ function curve(pts) {
 }
 ```
 
-並べ替えできない列の `th` には `aria-sort` を付けない（上の `th:not([aria-sort])` で隠すため）。
+並べ替えできない列の `th` には `is-sortable` を付けない（上の `th:not(.is-sortable)` で隠すため）。`aria-sort` は今並べ替えている列にだけ付ける（3 を参照）。
 
 ## 8. 強制カラー
 
