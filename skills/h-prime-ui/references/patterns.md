@@ -74,13 +74,15 @@ body { margin: 0; background: var(--hp-ground); color: var(--hp-ink); font: var(
 .hp-face.is-open :is(.hp-name, .hp-sub) { color: var(--hp-light); }
 .hp-face.is-open :is(small, .hp-face__st, .hp-face__btn) { color: var(--hp-light-sub); }
 .hp-face.is-open :focus-visible { outline-color: var(--hp-light); }
-.hp-detail { display: grid; grid-template-columns: 58px minmax(0, 1fr); gap: 0 28px; padding: 22px 28px; background: var(--hp-grape); color: var(--hp-light); }
+.hp-detail { grid-template-columns: 58px minmax(0, 1fr); gap: 0 28px; padding: 22px 28px; background: var(--hp-grape); color: var(--hp-light); }
+.hp-detail:not([hidden]) { display: grid; } /* display を hidden のときに掛けない（掛けると閉じても表示され、中のボタンに Tab で入れてしまう） */
 .hp-detail__title { margin: 0; writing-mode: vertical-rl; font-family: var(--hp-mincho); font-size: 20px; letter-spacing: .1em; border-right: 1px solid var(--hp-light-rule); }
 .hp-detail dt { font-size: 12px; color: var(--hp-light-sub); }
 .hp-detail :focus-visible, .hp-detail__title:focus { outline-color: var(--hp-light); }
 ```
 
 - 名前が長い面は文字を小さくする（例：12字を超えたら 24px）。それでも収まらない業務では、縦組みをやめる判断をする（[design-principles.md](design-principles.md) の「変えてよい点」）。
+- 閉じた詳細は `hidden` で隠す。`display` を指定するときは `:not([hidden])` に限る（狭い幅のルールでも `display` を上書きしない）。
 - 詳細を開いたら、詳細の見出し（`tabindex="-1"`）へフォーカスを移してよい。閉じたら開いた面のボタンへ戻す。
 - 狭い幅では面が縦に積まれるので、列の直後の詳細は選んだ帯から離れる（帯が多いほど遠い）。離したくない場合は、狭い幅のときだけ詳細を選んだ帯の中（開閉ボタンの直後）に置く。置き場所は `matchMedia` などで切り替え、DOM を描き直す前に詳細を列の外へ戻し、移動の前後でフォーカスを保つ（`order` で見た目だけ動かさない）。
 - 中間の幅で面が2段に折り返すと、詳細は2段目の下に開き、上の段の選んだ面とのつながりは弱まる。1日分・1見開き分など、件数を1段に収まる数に抑えられる業務に向く。

@@ -1,0 +1,2 @@
+# scripts/validate-skills.py が使う YAML パーサー（配布する Skill のフォルダーには入れない）
+PyYAML==6.0.3
