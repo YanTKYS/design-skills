@@ -79,6 +79,7 @@ body { margin: 0; background: var(--hp-ground); color: var(--hp-ink); font: var(
 .hp-detail__title { margin: 0; writing-mode: vertical-rl; font-family: var(--hp-mincho); font-size: 20px; letter-spacing: .1em; border-right: 1px solid var(--hp-light-rule); }
 .hp-detail dt { font-size: 12px; color: var(--hp-light-sub); }
 .hp-detail :focus-visible, .hp-detail__title:focus { outline-color: var(--hp-light); }
+.hp-detail .hp-link { color: inherit; } /* 葡萄色の詳細の中の「詳細を閉じる」は明るい文字と下線（.hp-link の葡萄色のままだと地と同じ色になり読めない） */
 ```
 
 - 名前が長い面は文字を小さくする（例：12字を超えたら 24px）。それでも収まらない業務では、縦組みをやめる判断をする（[design-principles.md](design-principles.md) の「変えてよい点」）。

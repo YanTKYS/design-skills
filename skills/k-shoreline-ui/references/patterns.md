@@ -123,11 +123,12 @@ body { margin: 0; background: var(--k-ground); color: var(--k-ink); font: var(--
 /* 広い幅：右の列を開く前から確保し、詳細の行をその列に見せる（DOM・Tab の順は行の直後のまま） */
 @media (min-width: 1000px) {
   .k-work { position: relative; }
-  .k-work.has-rows { padding-right: var(--k-detail-width); }
+  .k-work.has-rows { padding-right: var(--k-detail-width); min-height: 260px; } /* 一覧が短くても、右の列に詳細を読める高さを取る */
   .k-work :is(.k-detail-row, .k-detail-slot) { position: absolute; top: 0; right: 0; bottom: 0; display: block; width: var(--k-detail-width); }
   .k-detail-row td { display: block; height: 100%; padding: 0 0 0 12px; border: 0; background: none; box-shadow: none; }
   /* 詳細は画面の上に留め、高さを超える分は詳細の中でスクロール（「詳細を閉じる」はいつも見える） */
-  .k-detail-row .k-detail { position: sticky; top: 12px; display: flex; max-height: max(260px, calc(100dvh - 120px)); }
+  /* 右の列は .k-work の高さの中に収める（absolute の列は親の高さに入らないので、はみ出すと後に続くボタンを覆い、押せなくなる） */
+  .k-detail-row .k-detail { position: sticky; top: 12px; display: flex; max-height: min(100%, max(260px, calc(100dvh - 120px))); }
   .k-detail-row .k-shore { flex: none; height: auto; }
   .k-detail-row .k-detail__in { display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; min-height: 0; }
   .k-detail-row .k-detail__body { min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
@@ -136,6 +137,7 @@ body { margin: 0; background: var(--k-ground); color: var(--k-ink); font: var(--
 ```
 
 - `top` は表の上端に合わせる（表の上に見出しの行があるなら、その高さ分を下げる）。
+- 右の列（`position: absolute`）の高さは `.k-work` の高さに入らない。詳細は `max-height: min(100%, …)` で `.k-work` の中に収め、長い本文は詳細の中でスクロールさせる。一覧が1〜2件で短いときのために、`.k-work` に `min-height` を取る。`z-index` で後のボタンを前に出して隠すのではなく、重ならないようにする。
 - 開いたら詳細の見出しへ、閉じたら開閉ボタンへフォーカスを移す。並べ替え・絞り込みで表を描き直したら、操作したボタンへフォーカスを戻す。
 - 並べ替えできる列の `th` には `is-sortable` のクラスを付ける（並べ替えできるかどうか）。`aria-sort` は今並べ替えている列の `th` にだけ付け（`ascending`／`descending`）、ほかの列からは外す（今の並べ替えの状態）。狭い幅では `is-sortable` の見出しだけを札として残し、今並べ替えている札だけを強調する（7 を参照）。
 
