@@ -92,13 +92,13 @@ body { margin: 0; background: var(--hp-ground); color: var(--hp-ink); font: var(
 ## 3. 見開きのフォーム
 
 ```html
-<form class="hp-form" novalidate>
+<form class="hp-form" novalidate>   <!-- novalidate は、4 のエラーの一覧を自前で出す場合だけ付ける -->
   <div class="hp-book">
     <section class="hp-page hp-page--right" aria-labelledby="ch-use">   <!-- 先に読む頁を DOM の先に -->
       <div class="hp-page__body">
         <div class="hp-field">
           <label class="hp-label" for="room">部屋<span class="hp-req">必須</span></label>
-          <select id="room" class="hp-input" aria-describedby="room-hint">…</select>
+          <select id="room" class="hp-input" aria-describedby="room-hint" required><option value="">選んでください</option>…</select>
           <p class="hp-hint" id="room-hint">定員を超える人数では予約できません。</p>
         </div>
       </div>
@@ -128,6 +128,8 @@ body { margin: 0; background: var(--hp-ground); color: var(--hp-ink); font: var(
 ```
 
 - 見開きの中身（入力欄・ヒント・エラー文）は横書き。縦組みは頁の右端の章名だけ。
+- 「必須」と書いた欄には `required` を付ける（選択欄は、値が空の「選んでください」を先頭に置くと、未選択を判定できる）。
+- `novalidate` は、送信時にブラウザーが出す検証の吹き出しを止めて、4 のエラーの一覧を自前で出す場合の例。`required` などの制約や `checkValidity()`・`validity` は止めないので、自前の検証でもそのまま使える。ブラウザーの標準の検証に任せる画面では付けない。対象アプリに独自の検証が既にあるなら、標準の検証へ置き換えなくてよい。
 - 「どちらを右頁にするか」は、利用者が先に決める・先に話すほう（窓口なら用件、申請なら申請者など）。業務の流れで決め、理由を設計メモに残す。
 
 ## 4. 確認の帯・操作・選択・フォーカス・エラー
