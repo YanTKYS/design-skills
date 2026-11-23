@@ -6,6 +6,8 @@
   2. name・description があり、name がフォルダー名と同じで、文字種・長さの制約を満たすこと
   3. SKILL.md と references/ などの Markdown の相対リンク、本文で名前を挙げた assets/ のファイルが、
      Skill のフォルダーの中に実在すること（フォルダーの外を指さないこと）
+また、README の「デザインを選ぶ」に載せた Skill（skills/<名前>/SKILL.md へのリンク）と、skills/ にある
+Skill のフォルダーが、過不足なく一致すること（件数は固定しない）。
 
 外部リンクの到達、エージェントによる自動選択、見た目は検査しない。
 
@@ -24,6 +26,10 @@ import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
 SKILLS = ROOT / "skills"
+README = ROOT / "README.md"
+GALLERY_HEADING = "## デザインを選ぶ"
+GALLERY_RE = re.compile(r"^## デザインを選ぶ[ \t]*\r?$(.*?)(?=^## |\Z)", re.M | re.S)
+GALLERY_LINK_RE = re.compile(r"\]\(skills/([^/)\s]+)/SKILL\.md\)")
 ALLOWED_KEYS = {"name", "description", "license", "compatibility", "metadata", "allowed-tools"}
 NAME_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 FRONTMATTER_RE = re.compile(r"\A---\r?\n(.*?)\r?\n---\r?\n", re.S)
@@ -94,6 +100,19 @@ def check_skill(skill_dir: Path) -> list[str]:
     return problems
 
 
+def check_readme(dir_names: set[str]) -> list[str]:
+    """README の「デザインを選ぶ」に載せた Skill と、skills/ のフォルダーを照らし合わせる。"""
+    if not README.is_file():
+        return ["README.md がない"]
+    gallery = GALLERY_RE.search(README.read_text(encoding="utf-8"))
+    if not gallery:
+        return [f"README.md に「{GALLERY_HEADING}」の見出しがない"]
+    listed = set(GALLERY_LINK_RE.findall(gallery.group(1)))
+    problems = [f"README に載っているが skills/{n}/ がない" for n in sorted(listed - dir_names)]
+    problems += [f"skills/{n}/ があるが README の「デザインを選ぶ」に載っていない" for n in sorted(dir_names - listed)]
+    return problems
+
+
 def main() -> int:
     dirs = sorted(d for d in SKILLS.iterdir() if d.is_dir())
     if not dirs:
@@ -114,7 +133,14 @@ def main() -> int:
             else:
                 print(f"OK  {src.name}")
     print(f"{len(dirs) - failed}/{len(dirs)} の Skill が検査を通過")
-    return 1 if failed else 0
+    readme_problems = check_readme({d.name for d in dirs})
+    if readme_problems:
+        print("NG  README の掲載と skills/ のフォルダーが一致しない")
+        for p in readme_problems:
+            print(f"    - {p}")
+    else:
+        print("OK  README の掲載と skills/ のフォルダーが一致")
+    return 1 if failed or readme_problems else 0
 
 
 if __name__ == "__main__":
