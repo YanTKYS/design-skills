@@ -148,7 +148,7 @@ function renderSortHeads(table, key, dir) {
   <div class="jr-fields">
     <div class="jr-field">
       <label class="jr-label" for="item">備品<span class="jr-req">必須</span></label>
-      <select id="item" class="jr-input" aria-describedby="item-hint">…</select>
+      <select id="item" class="jr-input" aria-describedby="item-hint" required><option value="">選んでください</option>…</select>
       <p class="jr-hint" id="item-hint">貸出できる備品だけが並びます。</p>
     </div>
     <div class="jr-field is-wide">…</div>

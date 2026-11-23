@@ -66,7 +66,7 @@
   <div class="ot-chapter__body">
     <div class="ot-field">
       <label for="title">件名 <span class="ot-req">必須</span></label>
-      <div><input id="title" aria-describedby="title-hint"><p id="title-hint">40字以内</p></div>
+      <div><input id="title" aria-describedby="title-hint" required maxlength="40"><p id="title-hint">40字以内</p></div>
     </div>
   </div>
 </section>
@@ -79,7 +79,7 @@
 .ot-field { display: grid; grid-template-columns: 172px 1fr; gap: 0 16px; padding: 12px 0; border-bottom: var(--ot-row-line); }
 .ot-field > label { border-right: var(--ot-axis); padding-right: 12px; }
 .ot-req { border-left: 1px solid var(--ot-rule); padding-left: .5em; margin-left: .5em; font-size: .85em; }
-.ot-field input, .ot-field textarea, .ot-field select { width: 100%; background: var(--ot-input); color: var(--ot-input-text);
+.ot-field input, .ot-field textarea, .ot-field select { box-sizing: border-box; width: 100%; background: var(--ot-input); color: var(--ot-input-text);
   border: 1px solid var(--ot-rule); border-radius: 0; font: inherit; padding: 8px 10px; }
 ```
 

@@ -283,6 +283,7 @@ function ticks(n, max) {
   .ls-table th:not(.is-sortable) { display: none; } /* 並べ替えできない列の見出しは札にしない */
   .ls-sort { min-height: 32px; padding: 2px 10px; border: 1px solid #5b6258; font-size: 13px; }
   .ls-table th:is([aria-sort='ascending'], [aria-sort='descending']) .ls-sort { background: var(--ls-amber); color: var(--ls-ink); border-color: var(--ls-amber); } /* 今並べ替えている札だけ */
+  .ls-table th:is([aria-sort='ascending'], [aria-sort='descending']) .ls-sort span { color: inherit; } /* 琥珀の札の上では矢印も札の文字の色（琥珀のままだと ↑↓ が消える） */
   .ls-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; padding: 12px; border-bottom: 1px solid var(--ls-row); }
   .ls-table td { padding: 0; border: 0; }
   .ls-row.is-open { background: var(--ls-amber); color: var(--ls-ink); font-weight: 700; border-bottom: 0; }

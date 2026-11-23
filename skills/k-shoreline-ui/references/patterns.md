@@ -215,8 +215,7 @@ const points = (counts, max) => counts.map((n, i) => ({ x: ((i + 0.5) / counts.l
 // 単調3次補間（Fritsch–Carlson）。隣の2点の範囲を超える山・谷を作らない。SVG は上が 0
 function curve(pts) {
   const p = pts.map((q) => [q.x, 100 - q.y]);
-  if (p.length === 0) return '';                     // 対象期間なし：曲線を作らない
-  if (p.length === 1) return `M0 ${p[0][1]}H100`;   // 期間が1つ：その高さの水平線（件数0なら基準線）
+  if (p.length < 2) return '';                       // 期間が0〜1つ：目安の曲線を作らない（1つなら実測の点と件数だけ）
   const n = p.length;
   const s = p.slice(0, -1).map((a, i) => (p[i + 1][1] - a[1]) / (p[i + 1][0] - a[0]));
   const t = p.map((_, i) => {
@@ -233,12 +232,13 @@ function curve(pts) {
   return d;
 }
 // 使い方：対象期間が0個なら null を返す。呼び出し側は図（SVG・点・基準線）を作らず、
-// <p class="k-chart__empty">対象期間なし</p> だけを置く。期間が1個以上なら、件数0の期間も基準線上の点として残す
+// <p class="k-chart__empty">対象期間なし</p> だけを置く。期間が1個以上なら、件数0の期間も基準線上の点として残す。
+// 期間が1つなら line・area は空。呼び出し側は SVG（線と面）を置かず、点・件数・基準線だけを見せる
 function chartPaths(counts) {
   if (counts.length === 0) return null;
   const pts = points(counts, Math.max(...counts));
   const line = curve(pts);
-  return { pts, line, area: `${line}L${pts[pts.length - 1].x} 100L${pts[0].x} 100Z` };
+  return { pts, line, area: line && `${line}L${pts[pts.length - 1].x} 100L${pts[0].x} 100Z` };
 }
 ```
 
@@ -253,7 +253,7 @@ function chartPaths(counts) {
       <b aria-hidden="true">2</b><span class="k-chart__label">10/19の週</span><span class="visually-hidden">2件</span></li> …
   </ol>
 </div>
-<p class="k-chart__note">点が各週の件数です。線と面は推移の目安で、週の途中の値を示すものではありません。</p>
+<p class="k-chart__note">点が各週の件数です。線と面は推移の目安で、週の途中の値を示すものではありません。</p>   <!-- 期間が1つで線と面がないときは「点が各週の件数です。」だけ -->
 ```
 
 ```css
