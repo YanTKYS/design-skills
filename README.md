@@ -96,6 +96,19 @@ mkdir -p .claude/skills && cp -R <design-skills>/skills/h-prime-ui .claude/skill
 mkdir -p .agents/skills && cp -R <design-skills>/skills/h-prime-ui .agents/skills/
 ```
 
+Windows の PowerShell でコピーする場合（アプリのリポジトリの直下で。`$src` はこのリポジトリの Skill のフォルダー、`$dest` はコピー先の `skills` フォルダー。パスに空白があっても、引用符で囲めばそのまま使えます）：
+
+```powershell
+$src  = "$env:USERPROFILE\Documents\design skills\skills\h-prime-ui"   # このリポジトリを置いた場所に合わせる
+$dest = ".claude\skills"                                                # Codex は ".agents\skills"
+New-Item -ItemType Directory -Force -Path $dest | Out-Null
+Copy-Item -Path $src -Destination $dest -Recurse -Force
+```
+
+- `-Destination` には Skill 名のフォルダーではなく、その親の `skills` フォルダーを指定します。`.claude\skills\h-prime-ui` を直接指定すると、そのフォルダーが既にあるときに `h-prime-ui\h-prime-ui` と二重になります。
+- 自分の全リポジトリで使う場合は、`$dest` を `"$env:USERPROFILE\.claude\skills"`（Codex は `"$env:USERPROFILE\.agents\skills"`）にします。
+- 更新するときの扱いは、下の「[Skill を更新するとき](#skill-を更新するとき)」を見てください。
+
 コピー後の構成（例）：
 
 ```text
@@ -118,7 +131,11 @@ mkdir -p .agents/skills && cp -R <design-skills>/skills/h-prime-ui .agents/skill
 | k-shoreline-ui | `tokens.css`、`k-shore.svg`（表題の等高線） |
 | l-signage-ui | `tokens.css`、`dot-digits.js`（5×7 のドット文字を描く小さな関数） |
 
-Skill を更新したときは、コピー先も同じフォルダーで上書きします。コピーした側で値を変えた場合は、どちらを正とするかを対象リポジトリの設計メモなどに書いておきます。
+### Skill を更新するとき
+
+- 基本は、上と同じコマンドでコピー先の同じフォルダーへ**上書き**します。
+- 上書きの前に、コピー先で独自に変えたファイル（`tokens.css` の値、`SKILL.md` の追記など）がないかを確かめ、あれば退避しておきます。コピーした側で値を変えた場合は、どちらを正とするかを対象リポジトリの設計メモなどに書いておきます。
+- 上書きでは、新しい版でなくなったファイルがコピー先に残ります。古いファイルを残したくない場合に限り、独自の変更を退避したうえで、コピー先の Skill 名のフォルダー（例：`.claude/skills/h-prime-ui`、PowerShell では `.claude\skills\h-prime-ui`）を削除してからコピーします。
 
 ## 検証の状況
 
