@@ -96,6 +96,19 @@ mkdir -p .claude/skills && cp -R <design-skills>/skills/h-prime-ui .claude/skill
 mkdir -p .agents/skills && cp -R <design-skills>/skills/h-prime-ui .agents/skills/
 ```
 
+Windows の PowerShell でコピーする場合（アプリのリポジトリの直下で。`$src` はこのリポジトリの Skill のフォルダー、`$dest` はコピー先の `skills` フォルダー。パスに空白があっても、引用符で囲めばそのまま使えます）：
+
+```powershell
+$src  = "$env:USERPROFILE\Documents\design skills\skills\h-prime-ui"   # このリポジトリを置いた場所に合わせる
+$dest = ".claude\skills"                                                # Codex は ".agents\skills"
+New-Item -ItemType Directory -Force -Path $dest | Out-Null
+Copy-Item -Path $src -Destination $dest -Recurse -Force
+```
+
+- `-Destination` には Skill 名のフォルダーではなく、その親の `skills` フォルダーを指定します。`.claude\skills\h-prime-ui` を直接指定すると、そのフォルダーが既にあるときに `h-prime-ui\h-prime-ui` と二重になります。
+- 自分の全リポジトリで使う場合は、`$dest` を `"$env:USERPROFILE\.claude\skills"`（Codex は `"$env:USERPROFILE\.agents\skills"`）にします。
+- Skill を更新するときは、古いファイルが残らないように、コピー先の Skill 名のフォルダー（例：`.claude\skills\h-prime-ui`）を先に削除してからコピーします（bash でも同じ）。
+
 コピー後の構成（例）：
 
 ```text
