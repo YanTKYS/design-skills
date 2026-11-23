@@ -64,9 +64,14 @@ body { margin: 0; background: var(--ls-ground); color: var(--ls-text); font: var
 <fieldset class="ls-states">
   <legend class="ls-states__label">状態</legend>
   <label class="ls-state">
-    <input type="radio" name="state" value="" checked>
+    <input type="radio" name="state" value="" id="state-all" checked>   <!-- id は「state-」＋ value（「すべて」は value="" なので state-all） -->
     <span class="ls-state__face"><span class="ls-state__label"><span class="ls-state__check" aria-hidden="true">✓</span>すべて</span>
       <span class="ls-state__dots"><!-- dotDigits(n) --></span><span class="visually-hidden">12件</span></span>
+  </label>
+  <label class="ls-state">
+    <input type="radio" name="state" value="waiting" id="state-waiting">
+    <span class="ls-state__face"><span class="ls-state__label"><span class="ls-state__check" aria-hidden="true">✓</span>待ち</span>
+      <span class="ls-state__dots"></span><span class="visually-hidden">6件</span></span>
   </label> …
 </fieldset>
 ```
@@ -87,10 +92,14 @@ body { margin: 0; background: var(--ls-ground); color: var(--ls-text); font: var
 ```
 
 ```js
+// 状態の一覧。id はラジオの value と同じ（'' は「すべて」）。counts も同じ id をキーにした件数
+const STATES = [{ id: '', label: 'すべて' }, { id: 'waiting', label: '待ち' } /* , … */];
+const stateId = (id) => 'state-' + (id || 'all');   // HTML の id と同じ規則
+
 // ラジオは最初に1回だけ作る。描き直しでは checked と件数だけを更新する（作り直すと、選んだラジオのフォーカスが失われ、矢印キーで続けて選べない）
 function renderStates(counts, selected) {
   for (const s of STATES) {
-    const input = document.getElementById('state-' + s.id);
+    const input = document.getElementById(stateId(s.id));
     input.checked = s.id === selected;
     input.nextElementSibling.querySelector('.ls-state__dots').innerHTML = dotDigits(counts[s.id], { width: 2 });
     input.nextElementSibling.querySelector('.visually-hidden').textContent = counts[s.id] + '件';
