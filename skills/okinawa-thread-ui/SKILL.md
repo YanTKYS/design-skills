@@ -1,6 +1,7 @@
 ---
 name: okinawa-thread-ui
 description: Applies the "糸の交点" (Okinawa-themed, thread-intersection) visual design to a web UI — deep indigo ground, light plain input surfaces, a thin lattice rail, double-ruled chapters, and chapter / label / value axes — when asked to design a new screen or restyle an existing screen in the 糸の交点 / 沖縄テーマ style. Covers lists, forms, dashboards and small apps (memos, reservations). Do not use for unrelated coding, refactoring or other design styles.
+license: MIT
 compatibility: Plain HTML/CSS (optionally JS). Works offline; no CDN, web font or external API is required.
 metadata:
   source: "YanTKYS/design-lab okinawa-thread (9th comparison design)"

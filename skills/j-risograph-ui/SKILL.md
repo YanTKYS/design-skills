@@ -1,6 +1,7 @@
 ---
 name: j-risograph-ui
 description: Applies the "二色刷り" (J案, two-color risograph) visual design to a web UI — cream paper printed in two plates, a blue plate for all text, rules and controls and a fluorescent-pink plate used only for slight misregistration on big headings, halftone dots, offset shadows and the ground of selected items; dotted rules, pill-shaped controls, a selected row marked with a blue bar and a 「表示中」 tag, and errors shown with an inverted blue 「エラー」 tag and double rules (never pink). Use only when the user asks for 二色刷り, J案, or this risograph style by name for a new or existing screen. Do not use for general print-style layouts, simple color changes, other design styles (including 糸の交点 and 折本), or unrelated coding.
+license: MIT
 compatibility: Plain HTML/CSS (optionally JS). Works offline; no CDN, web font or external API is required.
 metadata:
   source: "YanTKYS/design-lab j-risograph (11th comparison design, J案)"

@@ -1,6 +1,7 @@
 ---
 name: h-prime-ui
 description: Applies the "折本" (H′, folding-book) visual design to a web UI — cream ground with a grape accent used only for "you are here", Mincho titles, items as vertical-text (縦組み) faces read right to left, two-part forms laid out as a 見開き (right page first, then left page, matching Tab order), and a switch to horizontal text on narrow screens. Use only when the user asks for 折本, H′, or this folding-book / 縦組み・見開き style for a new or existing screen. Do not use for other design styles (including 糸の交点), for general vertical-text typesetting, or for unrelated coding.
+license: MIT
 compatibility: Plain HTML/CSS (optionally JS). Works offline; no CDN, web font or external API is required. Needs CSS writing-mode (all current browsers).
 metadata:
   source: "YanTKYS/design-lab h-prime (10th comparison design, H′)"
