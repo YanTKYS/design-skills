@@ -5,7 +5,7 @@ license: MIT
 compatibility: Plain HTML/CSS (optionally JS). Works offline; no CDN, web font or external API is required. Needs CSS writing-mode (all current browsers).
 metadata:
   source: "YanTKYS/design-lab h-prime (10th comparison design, H′)"
-  version: "0.1"
+  version: "0.1.0"
 ---
 
 # 折本（H′）UI を適用する
