@@ -1,6 +1,7 @@
 ---
 name: l-signage-ui
 description: Applies the "標示盤" (L案, signage board) visual design to a web UI — a dark green-black board divided into panels, where only the current state is lit in amber (the selected status, the selected row and the detail opened under it, the current step of a form, the primary action), counts shown as decorative 5×7 dot digits alongside readable text, a cream focus ring that never looks like the amber selection, and — only where the app already counts things — "1 tick = 1 item" bars. Use only when the user asks for 標示盤, L案 or l-signage by name for a new or existing screen. Do not use for generic dark themes, railway or airport themes, dashboards in general, other design styles (糸の交点, 折本, 二色刷り, 汀線), or unrelated coding.
+license: MIT
 compatibility: Plain HTML/CSS (optionally JS). Works offline and in closed networks; no CDN, web font or external API is required.
 metadata:
   source: "YanTKYS/design-lab l-signage (13th comparison design, L案)"

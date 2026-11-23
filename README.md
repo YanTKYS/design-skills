@@ -79,7 +79,7 @@ Skill は design-lab の `skills/` から移行しました。形式は [Agent S
 
 Skill は**使うアプリのリポジトリ（またはユーザーの設定フォルダー）にコピーしたときだけ**読み込まれます。このリポジトリが GitHub にあるだけでは、エージェントがほかのリポジトリの作業で自動的に使うことはありません。
 
-使う Skill のフォルダーを、`references/` と `assets/` を含めて**丸ごと**コピーします（シンボリックリンクは不要です。Windows でもエクスプローラーでのコピーで足ります）。
+使う Skill のフォルダーを、`references/`・`assets/`・`LICENSE` を含めて**丸ごと**コピーします（シンボリックリンクは不要です。Windows でもエクスプローラーでのコピーで足ります）。
 
 | エージェント | 対象のリポジトリだけで使う | 自分の全リポジトリで使う |
 | --- | --- | --- |
@@ -114,6 +114,7 @@ Copy-Item -Path $src -Destination $dest -Recurse -Force
 ```text
 .claude/skills/h-prime-ui/     （Codex は .agents/skills/h-prime-ui/）
 ├── SKILL.md
+├── LICENSE                    （MIT License。消さずに残す）
 ├── references/
 │   ├── design-principles.md
 │   └── patterns.md
@@ -164,7 +165,14 @@ Copy-Item -Path $src -Destination $dest -Recurse -Force
 - 5つはいずれも design-lab で作った**独自のデザイン**（名称は仮称）です。公式のデザインシステム、伝統工芸・実在の印刷物・地図・表示器の再現ではありません。
 - Skill に入っているのは、色・書体・罫のトークンと規則、最小の例、小さな自作の素材だけです。design-lab の比較サイトの CSS・HTML・JavaScript は含まず、対象アプリの仕組みに合わせて書く前提です。
 - 模様・等高線・ドット文字の字形は、第三者の素材を含まない自作のものです。
-- **再配布の条件は未定**です。このリポジトリには LICENSE ファイルがありません。組織の外へ再配布するときや、商用で使うときの条件は、リポジトリの所有者に確認してください。販売やマーケットプレイスへの掲載は想定していません。
 - README の画像（`docs/images/`）は、design-lab の適用見本の画面写真を切り取って縮小したものです。
+
+## ライセンス
+
+- このリポジトリのファイル（5つの Skill、その中の自作のアセット、README などの文書と画像、検査用のスクリプト）は [MIT License](LICENSE) です。
+- 商用での利用、改変、複製、再配布、販売（改変したものを含む）ができます。その際は、著作権表示と許諾文（`LICENSE` の全文）を残してください。無保証です。
+- 各 Skill のフォルダーにも同じ `LICENSE` を入れてあります。上の「導入する」のとおりフォルダーごとコピーすれば、許諾文も一緒に入ります。`SKILL.md` の frontmatter にも `license: MIT` と書いてあります。
+- 元の Skill（正本）は [YanTKYS/design-skills](https://github.com/YanTKYS/design-skills) です。更新はここで行います。
+- この許諾は、このリポジトリのファイルだけに及びます。[design-lab](https://github.com/YanTKYS/design-lab) の比較サイト・見本、比較サイトで並べている公開デザインシステムの素材には及びません（それぞれの許諾条件に従います）。
 
 リポジトリの説明文・Topics・共有用の画像（Social preview）の設定方法は [docs/repository-settings.md](docs/repository-settings.md) にあります（リポジトリの管理者向け）。
