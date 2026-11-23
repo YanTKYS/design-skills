@@ -148,6 +148,17 @@ Copy-Item -Path $src -Destination $dest -Recurse -Force
 - 上書きの前に、コピー先で独自に変えたファイル（`tokens.css` の値、`SKILL.md` の追記など）がないかを確かめ、あれば退避しておきます。コピーした側で値を変えた場合は、どちらを正とするかを対象リポジトリの設計メモなどに書いておきます。
 - 上書きでは、新しい版でなくなったファイルがコピー先に残ります。古いファイルを残したくない場合に限り、独自の変更を退避したうえで、コピー先の Skill 名のフォルダー（例：`.claude/skills/h-prime-ui`、PowerShell では `.claude\skills\h-prime-ui`）を削除してからコピーします。
 
+### 版（バージョン）
+
+- 配布版は、リポジトリ全体で1つの版番号とタグ（例：`v0.1.0`）で示します。各 `SKILL.md` の `metadata.version`（例：`"0.1.0"`）は、そのタグの版と同じです。フォルダーだけをコピーした後も、コピー先の `SKILL.md` で、どの版から取ったかが分かります。
+- 決まった版を取るときは、[Releases](https://github.com/YanTKYS/design-skills/releases) から入手するか、タグを指定して clone します（`v0.1.0` は使う版に読み替え）。
+
+```bash
+git clone --branch v0.1.0 https://github.com/YanTKYS/design-skills.git
+```
+
+- 版番号は、取った配布版の目安です。コピー先で変えた内容が配布版と同じであることや、新しい版が出たことの通知までは保証しません。
+
 ## 検証の状況
 
 ### 確かめたこと
