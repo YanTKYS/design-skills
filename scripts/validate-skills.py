@@ -6,6 +6,7 @@
   2. name・description があり、name がフォルダー名と同じで、文字種・長さの制約を満たすこと
   3. SKILL.md と references/ などの Markdown の相対リンク、本文で名前を挙げた assets/ のファイルが、
      Skill のフォルダーの中に実在すること（フォルダーの外を指さないこと）
+  4. フォルダーの中の LICENSE が、リポジトリ直下の LICENSE と同じ内容であること。frontmatter の license が MIT であること
 また、README の「デザインを選ぶ」に載せた Skill（skills/<名前>/SKILL.md へのリンク）と、skills/ にある
 Skill のフォルダーが、過不足なく一致すること（件数は固定しない）。
 
@@ -27,6 +28,8 @@ import yaml
 ROOT = Path(__file__).resolve().parent.parent
 SKILLS = ROOT / "skills"
 README = ROOT / "README.md"
+ROOT_LICENSE = ROOT / "LICENSE"
+LICENSE_ID = "MIT"
 GALLERY_HEADING = "## デザインを選ぶ"
 GALLERY_RE = re.compile(r"^## デザインを選ぶ[ \t]*\r?$(.*?)(?=^## |\Z)", re.M | re.S)
 GALLERY_LINK_RE = re.compile(r"\]\(skills/([^/)\s]+)/SKILL\.md\)")
@@ -77,6 +80,9 @@ def check_skill(skill_dir: Path) -> list[str]:
     comp = data.get("compatibility")
     if comp is not None and (not isinstance(comp, str) or len(comp) > 500):
         problems.append("compatibility は500字以内の文字列")
+    lic = data.get("license")
+    if lic != LICENSE_ID:
+        problems.append(f"license が「{LICENSE_ID}」でない（今は {lic!r}）")
     meta = data.get("metadata")
     if meta is not None and (not isinstance(meta, dict) or not all(isinstance(v, str) for v in meta.values())):
         problems.append("metadata は「キー: 文字列」の対応表")
@@ -100,6 +106,16 @@ def check_skill(skill_dir: Path) -> list[str]:
     return problems
 
 
+def check_license_file(skill_dir: Path, root_license: bytes) -> list[str]:
+    """skill_dir（単独でコピーしたフォルダー）の LICENSE が、リポジトリ直下の LICENSE と同じかを見る。"""
+    lic = skill_dir / "LICENSE"
+    if not lic.is_file():
+        return ["LICENSE がない（リポジトリ直下の LICENSE と同じものを置く）"]
+    if lic.read_bytes() != root_license:
+        return ["LICENSE がリポジトリ直下の LICENSE と違う"]
+    return []
+
+
 def check_readme(dir_names: set[str]) -> list[str]:
     """README の「デザインを選ぶ」に載せた Skill と、skills/ のフォルダーを照らし合わせる。"""
     if not README.is_file():
@@ -118,13 +134,17 @@ def main() -> int:
     if not dirs:
         print("skills/ に Skill がない")
         return 1
+    if not ROOT_LICENSE.is_file():
+        print("NG  リポジトリ直下に LICENSE がない")
+        return 1
+    root_license = ROOT_LICENSE.read_bytes()
     failed = 0
     with tempfile.TemporaryDirectory() as tmp:
         for src in dirs:
             # Skill はフォルダーごと単独でコピーして使うので、ほかのファイルがない場所で検査する
             copy = Path(tmp) / src.name
             shutil.copytree(src, copy)
-            problems = check_skill(copy)
+            problems = check_skill(copy) + check_license_file(copy, root_license)
             if problems:
                 failed += 1
                 print(f"NG  {src.name}")

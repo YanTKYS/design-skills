@@ -86,14 +86,24 @@ Skill は**使うアプリのリポジトリ（またはユーザーの設定フ
 | Claude Code | `<アプリのリポジトリ>/.claude/skills/<Skill 名>/` | `~/.claude/skills/<Skill 名>/` |
 | Codex | `<アプリのリポジトリ>/.agents/skills/<Skill 名>/` | `~/.agents/skills/<Skill 名>/` |
 
-コマンドでコピーする場合（アプリのリポジトリの直下で。`<design-skills>` はこのリポジトリを置いた場所、`h-prime-ui` は使う Skill 名に読み替え）：
+コマンドでコピーする場合（Bash。アプリのリポジトリの直下で実行）。書き換えるのは `src=` の1行だけです。`$HOME/projects/design-skills` は仮の置き場所なので、このリポジトリを clone した場所に、`h-prime-ui` は使う Skill 名に変えます。引用符で囲んであるので、パスに空白があってもそのまま動きます。
+
+Claude Code の場合：
 
 ```bash
-mkdir -p .claude/skills && cp -R <design-skills>/skills/h-prime-ui .claude/skills/
+# この1行だけ、実際に clone した場所と使う Skill 名に変える
+src="$HOME/projects/design-skills/skills/h-prime-ui"
+mkdir -p .claude/skills
+cp -R "$src" .claude/skills/
 ```
 
+Codex の場合（コピー先だけが違う）：
+
 ```bash
-mkdir -p .agents/skills && cp -R <design-skills>/skills/h-prime-ui .agents/skills/
+# この1行だけ、実際に clone した場所と使う Skill 名に変える
+src="$HOME/projects/design-skills/skills/h-prime-ui"
+mkdir -p .agents/skills
+cp -R "$src" .agents/skills/
 ```
 
 Windows の PowerShell でコピーする場合（アプリのリポジトリの直下で。`$src` はこのリポジトリの Skill のフォルダー、`$dest` はコピー先の `skills` フォルダー。パスに空白があっても、引用符で囲めばそのまま使えます）：
@@ -142,8 +152,10 @@ Copy-Item -Path $src -Destination $dest -Recurse -Force
 
 ### 確かめたこと
 
-- **Agent Skills の形式**（[scripts/validate-skills.py](scripts/validate-skills.py)。プルリクエストと `main` への push のたびに GitHub Actions で実行）：`skills/` にある Skill をフォルダーごと一時フォルダーへ1つずつコピーし、`SKILL.md` の frontmatter が実際の YAML パーサー（PyYAML）で読めること、`name` とフォルダー名の一致・`name` の文字種・`description` の長さなどの仕様上の制約、`references/`・`assets/` への相対リンクと本文で挙げたアセットが Skill のフォルダーの中に実在すること。あわせて、この README の「デザインを選ぶ」に載せた Skill と `skills/` のフォルダーが過不足なく一致すること（フォルダーだけ追加して掲載を忘れた場合、掲載したままフォルダーを消した場合はエラー）。手元では `pip install -r scripts/requirements.txt` のあと `python scripts/validate-skills.py` で同じ検査ができます（`scripts/` と `.github/` は検査用で、Skill のフォルダーにはコピーしません）。
-- **独立したセッションでの適用（糸の交点のみ）**：`okinawa-thread-ui` は、別の Codex のセッションが Skill だけをデザインの資料として、2つのアプリに適用しました（[markdown-library PR #11](https://github.com/YanTKYS/markdown-library/pull/11)、[okinawa-watch PR #12](https://github.com/YanTKYS/okinawa-watch/pull/12)。どちらもマージ済み）。
+- **Agent Skills の形式**（[scripts/validate-skills.py](scripts/validate-skills.py)。プルリクエストと `main` への push のたびに GitHub Actions で実行）：`skills/` にある Skill をフォルダーごと一時フォルダーへ1つずつコピーし、`SKILL.md` の frontmatter が実際の YAML パーサー（PyYAML）で読めること、`name` とフォルダー名の一致・`name` の文字種・`description` の長さなどの仕様上の制約、`references/`・`assets/` への相対リンクと本文で挙げたアセットが Skill のフォルダーの中に実在すること、フォルダーの中の `LICENSE` がリポジトリ直下の `LICENSE` と同じ内容で、frontmatter の `license` が `MIT` であること。あわせて、この README の「デザインを選ぶ」に載せた Skill と `skills/` のフォルダーが過不足なく一致すること（フォルダーだけ追加して掲載を忘れた場合、掲載したままフォルダーを消した場合はエラー）。手元では `pip install -r scripts/requirements.txt` のあと `python scripts/validate-skills.py` で同じ検査ができます（`scripts/` と `.github/` は検査用で、Skill のフォルダーにはコピーしません）。
+- **独立したセッションでの適用（糸の交点・二色刷り）**：Skill を書いたのとは別のセッションが、Skill をデザインの資料として適用した例です。どれも、依頼の中で Skill を名指しして読ませたもので、エージェントが Skill を自動で見つけて選んだかの検証ではありません。
+  - `okinawa-thread-ui`：別の Codex のセッションが、2つのアプリに適用しました（[markdown-library PR #11](https://github.com/YanTKYS/markdown-library/pull/11)、[okinawa-watch PR #12](https://github.com/YanTKYS/okinawa-watch/pull/12)。どちらもマージ済み）。
+  - `j-risograph-ui`：Mistral Vibe Code が、この Skill を clone して読み、kanban の**試験用のファイル** `iKanbanPilot.html` に追加のテーマとして適用しました（[kanban PR #18](https://github.com/YanTKYS/kanban/pull/18)。マージ済みの PoC）。実用版のアプリ全体への適用ではありません。
 - **Skill を書いた本人による適用見本（5つとも）**：Skill を書いた同じ作業の中で、比較サイトにない別の業務に当てはめた見本です。作り手が原本の実装を知っているため、**独立した適用の評価ではありません**。見本と検証記録は design-lab にあります。
 
 | Skill | 見本（design-lab） | 検証記録 |
@@ -156,9 +168,15 @@ Copy-Item -Path $src -Destination $dest -Recurse -Force
 
 ### まだ確かめていないこと
 
-- `h-prime-ui`・`j-risograph-ui`・`k-shoreline-ui`・`l-signage-ui` を、別のセッションに Skill だけを渡して適用させたときの再現性。
+- `h-prime-ui`・`k-shoreline-ui`・`l-signage-ui` を、別のセッションに Skill だけを渡して適用させたときの再現性。`j-risograph-ui` は試験用のファイル1つへの適用（上記）だけで、実用のアプリでの再現性は確かめていません。
 - Claude Code・Codex で、セッションの開始時に Skill が自動で認識され、依頼に応じて選ばれること。
 - スクリーンリーダー、実機の IME、Chromium 以外のブラウザ、実際の OS の強制カラーなど、実機での確認。
+
+## 変更を提案する
+
+- `SKILL.md`・`references/`・`assets/` など **Skill 本体の修正は、このリポジトリ（design-skills）** に Issue またはプルリクエストで送ってください。比較サイトと、Skill を作ったときの固定の見本・検証記録は [design-lab](https://github.com/YanTKYS/design-lab) にあります。
+- プルリクエストの前に、少なくとも次を実行して通ることを確かめてください（Python 3）：`pip install -r scripts/requirements.txt` のあと `python scripts/validate-skills.py`。
+- 見た目や操作の不具合を報告するときは、Skill 名・画面の幅・再現の手順（できればブラウザー名も）を添えてください。
 
 ## 注意
 
