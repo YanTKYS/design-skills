@@ -46,7 +46,7 @@
 
 ![標示盤の適用見本（窓口の呼び出し）：暗い盤面の区画に、呼び出し中の窓口だけが琥珀に点灯し、番号と件数をドット文字で表示、用件ごとの待ち人数を1目盛り＝1人で表示](docs/images/l-signage-ui-preview.webp)
 
-- **特徴**：暗い盤面を区画に分け、今の状態だけを琥珀で点灯させる。件数は 5×7 のドット文字（装飾。数値は文字でも読める）、1目盛り＝1件の点灯。
+- **特徴**：暗い盤面を区画に分け、今の状態だけを琥珀で点灯させる。件数などを 5×7 のドット文字で点灯させてもよい（任意の装飾。数値は普通の文字で読める。時計のように数値そのものを読ませる表示では使わなくてよい）。件数を扱う画面では1目盛り＝1件の点灯。
 - **向く用途の例**：状態の表示、進捗・窓口の管理、手順のある入力。
 - **呼び方の例**：「標示盤で」「L案で」
 - 見本：窓口の呼び出し（[検証記録](https://github.com/YanTKYS/design-lab/blob/main/examples/l-signage-counter-queue/VERIFICATION.md)）
@@ -73,7 +73,7 @@
 | **design-skills**（ここ） | 配布する Skill の**正本**。Skill の更新はここで行う |
 | [design-lab](https://github.com/YanTKYS/design-lab) | 13デザインの調査・比較サイト（[公開ページ](https://yantkys.github.io/design-lab/)）と、Skill を作ったときの固定の適用見本・検証記録の正本 |
 
-Skill は design-lab の `skills/` から移行しました。形式は [Agent Skills の仕様](https://agentskills.io/specification)（`SKILL.md` と任意の `references/`・`assets/`）に合わせています。
+Skill の元になったデザインと、Skill を作ったときの見本は design-lab にあります。形式は [Agent Skills の仕様](https://agentskills.io/specification)（`SKILL.md` と任意の `references/`・`assets/`）に合わせています。
 
 ## 導入する
 
@@ -148,6 +148,15 @@ Copy-Item -Path $src -Destination $dest -Recurse -Force
 - 上書きの前に、コピー先で独自に変えたファイル（`tokens.css` の値、`SKILL.md` の追記など）がないかを確かめ、あれば退避しておきます。コピーした側で値を変えた場合は、どちらを正とするかを対象リポジトリの設計メモなどに書いておきます。
 - 上書きでは、新しい版でなくなったファイルがコピー先に残ります。古いファイルを残したくない場合に限り、独自の変更を退避したうえで、コピー先の Skill 名のフォルダー（例：`.claude/skills/h-prime-ui`、PowerShell では `.claude\skills\h-prime-ui`）を削除してからコピーします。
 
+### 既存のアプリに試すとき
+
+既存のアプリに適用するときの進め方です（各 `SKILL.md` の手順にも短く書いてあります）。
+
+- 依頼がない限り、**現行のデザインを標準のまま残し**、Skill を選べる追加のテーマとして試します（明示的に置き換えを頼む場合や、新しいアプリは別）。依頼していないテーマの切替機能は、エージェントに勝手に作らせません。
+- テーマの切替を頼む場合は、標準を初期値にし、選んだテーマの保存、既存の明暗の配色モード、データ・主要操作・URL を保ち、テーマの CSS の範囲を分けるよう伝えます。
+- Skill のコードや素材を取り込んだら、MIT の著作権表示と許諾文の全文を、アプリの配布物にも残します（1つの HTML ならコメント、静的サイトなら配布するファイルなど）。アプリ全体のライセンスは変えません。
+- Skill の部品をすべて入れることより、アプリの目的・読みやすさ・操作のしやすさを優先します。既存の機能にない部品は足さず、使わなかった部品とその理由を報告してもらいます。
+
 ### 版（バージョン）
 
 - 配布版は、リポジトリ全体で1つの版番号とタグ（例：`v0.1.0`）で示します。各 `SKILL.md` の `metadata.version`（例：`"0.1.0"`）は、そのタグの版と同じです。フォルダーだけをコピーした後も、コピー先の `SKILL.md` で、どの版から取ったかが分かります。
@@ -158,15 +167,24 @@ git clone --branch v0.1.0 https://github.com/YanTKYS/design-skills.git
 ```
 
 - 版番号は、取った配布版の目安です。コピー先で変えた内容が配布版と同じであることや、新しい版が出たことの通知までは保証しません。
+- 版ごとの変更は [CHANGELOG.md](CHANGELOG.md) にまとめます。この README と各 Skill の文書は今の使い方と仕様だけを書き、変更の経緯は CHANGELOG、詳しい議論と確認の記録は Issue・プルリクエストに残します。
 
 ## 検証の状況
 
 ### 確かめたこと
 
 - **Agent Skills の形式**（[scripts/validate-skills.py](scripts/validate-skills.py)。プルリクエストと `main` への push のたびに GitHub Actions で実行）：`skills/` にある Skill をフォルダーごと一時フォルダーへ1つずつコピーし、`SKILL.md` の frontmatter が実際の YAML パーサー（PyYAML）で読めること、`name` とフォルダー名の一致・`name` の文字種・`description` の長さなどの仕様上の制約、`references/`・`assets/` への相対リンクと本文で挙げたアセットが Skill のフォルダーの中に実在すること、フォルダーの中の `LICENSE` がリポジトリ直下の `LICENSE` と同じ内容で、frontmatter の `license` が `MIT` であること。あわせて、この README の「デザインを選ぶ」に載せた Skill と `skills/` のフォルダーが過不足なく一致すること（フォルダーだけ追加して掲載を忘れた場合、掲載したままフォルダーを消した場合はエラー）。手元では `pip install -r scripts/requirements.txt` のあと `python scripts/validate-skills.py` で同じ検査ができます（`scripts/` と `.github/` は検査用で、Skill のフォルダーにはコピーしません）。
-- **独立したセッションでの適用（糸の交点・二色刷り）**：Skill を書いたのとは別のセッションが、Skill をデザインの資料として適用した例です。どれも、依頼の中で Skill を名指しして読ませたもので、エージェントが Skill を自動で見つけて選んだかの検証ではありません。
-  - `okinawa-thread-ui`：別の Codex のセッションが、2つのアプリに適用しました（[markdown-library PR #11](https://github.com/YanTKYS/markdown-library/pull/11)、[okinawa-watch PR #12](https://github.com/YanTKYS/okinawa-watch/pull/12)。どちらもマージ済み）。
-  - `j-risograph-ui`：Mistral Vibe Code が、この Skill を clone して読み、kanban の**試験用のファイル** `iKanbanPilot.html` に追加のテーマとして適用しました（[kanban PR #18](https://github.com/YanTKYS/kanban/pull/18)。マージ済みの PoC）。実用版のアプリ全体への適用ではありません。
+- **独立したセッションでの適用（5つとも）**：Skill を書いたのとは別のセッションが、Skill をデザインの資料として適用した例です（どれもマージ済み）。どれも依頼の中で Skill を渡して（名指しして）読ませたもので、エージェントが Skill を自動で見つけて選ぶかの検証ではありません。どの画面・エージェント・ブラウザでも同じように適用できることを保証するものでもありません。
+
+  | Skill | 適用先 | エージェント | 適用の形 |
+  | --- | --- | --- | --- |
+  | okinawa-thread-ui | [markdown-library PR #11](https://github.com/YanTKYS/markdown-library/pull/11)、[okinawa-watch PR #12](https://github.com/YanTKYS/okinawa-watch/pull/12) | Codex | アプリの見た目に適用 |
+  | j-risograph-ui | [kanban PR #18](https://github.com/YanTKYS/kanban/pull/18) | Mistral Vibe Code | **試験用のファイル**（`iKanbanPilot.html`）の追加のテーマ。実用版のアプリ全体ではない |
+  | h-prime-ui | [since PR #9](https://github.com/YanTKYS/since/pull/9) | Mistral Vibe Code（v0.1.0） | 標準のテーマを残し、選べる追加のテーマ |
+  | k-shoreline-ui | [devlog PR #32](https://github.com/YanTKYS/devlog/pull/32) | Mistral Vibe Code（v0.1.0） | 標準のテーマを残し、選べる追加のテーマ |
+  | l-signage-ui | [clock PR #35](https://github.com/YanTKYS/clock/pull/35) | Mistral Vibe Code（v0.1.0） | 標準のテーマを残し、選べる追加のテーマ |
+
+  採用した部品・使わなかった部品とその理由は、それぞれの PR に書いてあります。
 - **Skill を書いた本人による適用見本（5つとも）**：Skill を書いた同じ作業の中で、比較サイトにない別の業務に当てはめた見本です。作り手が原本の実装を知っているため、**独立した適用の評価ではありません**。見本と検証記録は design-lab にあります。
 
 | Skill | 見本（design-lab） | 検証記録 |
@@ -179,7 +197,7 @@ git clone --branch v0.1.0 https://github.com/YanTKYS/design-skills.git
 
 ### まだ確かめていないこと
 
-- `h-prime-ui`・`k-shoreline-ui`・`l-signage-ui` を、別のセッションに Skill だけを渡して適用させたときの再現性。`j-risograph-ui` は試験用のファイル1つへの適用（上記）だけで、実用のアプリでの再現性は確かめていません。
+- 独立した適用は、5つとも1〜2件ずつで、Codex と Mistral Vibe Code の2つのエージェントによるものです。ほかのエージェント・ほかの種類の画面での再現性は確かめていません。`j-risograph-ui` は試験用のファイル1つへの適用だけで、実用のアプリ全体への適用はしていません。
 - Claude Code・Codex で、セッションの開始時に Skill が自動で認識され、依頼に応じて選ばれること。
 - スクリーンリーダー、実機の IME、Chromium 以外のブラウザ、実際の OS の強制カラーなど、実機での確認。
 

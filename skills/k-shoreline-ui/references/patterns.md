@@ -13,6 +13,7 @@
 7. 狭い幅
 8. 強制カラー
 9. 画面の種類ごとの当てはめ方
+10. まとまりに分かれた閲覧の一覧（見出しの陸と内容の海）、既存のタブ・二択
 
 ## 1. 地・帯・表題（等高線の装飾）
 
@@ -333,3 +334,40 @@ function chartPaths(counts) {
 | 照会・問い合わせの進捗 | 絞り込みの札、表、右の列（広い幅）・行の直下（狭い幅）の詳細、受付の章、週別の推移（集計がある場合） | 指標の帯 |
 | 設備の点検記録 | 表、行の直下の詳細、点検結果の章 | 右の列（列が多い場合）、推移 |
 | 設定・ログイン | 1つの章（陸と水際） | 表・詳細・推移 |
+| 日付ごとの記録・カテゴリごとのカード（閲覧） | まとまりの見出しの陸と内容の海、既存のタブ・二択の選択の表し方（10） | 詳細の右の列・新しい詳細・指標・推移・フォーム |
+
+## 10. まとまりに分かれた閲覧の一覧（見出しの陸と内容の海）、既存のタブ・二択
+
+既にまとまり（日付・カテゴリなど）に分かれている一覧だけで使う。見出しを陸、そのまとまりの記録・カードを海として面でつなぎ、見出しの右端に控えめな汀線を置く。詳細の列・指標・グラフは足さない。
+
+```html
+<section class="k-group" aria-labelledby="g-1124">
+  <h2 class="k-group__head" id="g-1124"><time datetime="2026-11-24">11月24日（火）</time></h2>
+  <div class="k-group__body">
+    <article class="k-card">…（既存のカード・記録）</article> …
+  </div>
+</section>
+```
+
+```css
+.k-group { margin-top: 20px; background: var(--k-sea); }
+/* 陸：見出し。右下の角を曲線にして、細い汀線を引く（装飾。曲線の分は padding-right で空け、文字に重ねない） */
+.k-group__head { width: fit-content; max-width: 100%; box-sizing: border-box; margin: 0; padding: 8px 48px 8px 16px;
+  background: var(--k-land); border: solid var(--k-shore); border-width: 0 1.5px 1.5px 0; border-radius: 0 0 40px 0 / 0 0 100% 0;
+  font-family: var(--k-mincho); font-size: 18px; }
+.k-group__body { display: grid; gap: 8px; padding: 12px 16px 16px; }
+.k-card { background: var(--k-field); border: 1px solid var(--k-row); padding: 12px 14px; }
+/* 既存のタブ・二択：部品と aria-* はそのまま、選んだ側を陸の面＋濃い緑の下線＋太字で */
+:is([role="tab"][aria-selected="true"], button[aria-pressed="true"]) { background: var(--k-land); font-weight: 700; box-shadow: inset 0 -3px 0 var(--k-green); }
+@media (max-width: 759px) {
+  /* 狭い幅では曲線を省く。曲線のための余白・枠・角の丸みも一緒に外す */
+  .k-group__head { width: auto; padding-right: 16px; border-width: 0; border-radius: 0; }
+}
+@media (forced-colors: active) {
+  :is([role="tab"][aria-selected="true"], button[aria-pressed="true"]) { border-bottom: 3px solid Highlight; }   /* 面と影が消えても選んだ側が分かる */
+}
+```
+
+- 見出しの文字・件数・操作と、曲線（右下の角と枠）が重ならないことを確かめる。重なる・幅が足りない場合は、曲線（枠と角の丸み）を外し、面だけでつなぐ。
+- 既存のタブ・二択は、ラジオなどに置き換えない。`aria-selected`・`aria-pressed` と既存のキーボード操作を保つ。
+- 長い本文（ノート・記事）は、別の画面（既存の遷移）のまま読ませる。カードに詰めない。
