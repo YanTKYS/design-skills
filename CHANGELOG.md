@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-25
+
 ### Added
 
 - 5つの Skill すべてに、別のセッションによる独立した適用の実績（README の「検証の状況」）。[since PR #9](https://github.com/YanTKYS/since/pull/9)（折本）、[devlog PR #32](https://github.com/YanTKYS/devlog/pull/32)（汀線）、[clock PR #35](https://github.com/YanTKYS/clock/pull/35)（標示盤）を追加。
@@ -32,5 +34,6 @@
 
 - UI の例の不具合：表示の重なり（汀線の右の列）、コントラスト（折本の「詳細を閉じる」、標示盤の並べ替えの矢印）、入力欄（必須の `required`、糸の交点の幅とテーマの範囲）、汀線のグラフ（0期間・1期間）。
 
-[Unreleased]: https://github.com/YanTKYS/design-skills/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/YanTKYS/design-skills/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/YanTKYS/design-skills/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/YanTKYS/design-skills/releases/tag/v0.1.0

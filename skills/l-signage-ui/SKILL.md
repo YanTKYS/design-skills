@@ -5,7 +5,7 @@ license: MIT
 compatibility: Plain HTML/CSS (optionally JS). Works offline and in closed networks; no CDN, web font or external API is required.
 metadata:
   source: "YanTKYS/design-lab l-signage (13th comparison design, L案)"
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
 # 標示盤（L案）UI を適用する
