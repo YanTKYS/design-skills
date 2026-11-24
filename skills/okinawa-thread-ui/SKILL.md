@@ -5,7 +5,7 @@ license: MIT
 compatibility: Plain HTML/CSS (optionally JS). Works offline; no CDN, web font or external API is required.
 metadata:
   source: "YanTKYS/design-lab okinawa-thread (9th comparison design)"
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
 # 糸の交点 UI を適用する

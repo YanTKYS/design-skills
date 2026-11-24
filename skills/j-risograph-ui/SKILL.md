@@ -5,7 +5,7 @@ license: MIT
 compatibility: Plain HTML/CSS (optionally JS). Works offline; no CDN, web font or external API is required.
 metadata:
   source: "YanTKYS/design-lab j-risograph (11th comparison design, J案)"
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
 # 二色刷り（J案）UI を適用する

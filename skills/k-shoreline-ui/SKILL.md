@@ -6,7 +6,7 @@ license: MIT
 compatibility: Plain HTML/CSS (optionally JS and inline SVG). Works offline; no CDN, web font or external API is required.
 metadata:
   source: "YanTKYS/design-lab k-shoreline (12th comparison design, K案)"
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
 # 汀線（K案）UI を適用する
