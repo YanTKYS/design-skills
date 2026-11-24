@@ -1,6 +1,6 @@
 ---
 name: l-signage-ui
-description: Applies the "標示盤" (L案, signage board) visual design to a web UI — a dark green-black board divided into panels, where only the current state is lit in amber (the selected status, the selected row and the detail opened under it, the current step of a form, the primary action), counts shown as decorative 5×7 dot digits alongside readable text, a cream focus ring that never looks like the amber selection, and — only where the app already counts things — "1 tick = 1 item" bars. Use only when the user asks for 標示盤, L案 or l-signage by name for a new or existing screen. Do not use for generic dark themes, railway or airport themes, dashboards in general, other design styles (糸の交点, 折本, 二色刷り, 汀線), or unrelated coding.
+description: Applies the "標示盤" (L案, signage board) visual design to a web UI — a dark green-black board divided into panels, where only the current state is lit in amber (the selected status, the selected row and the detail opened under it, the current step of a form, the primary action), counts optionally shown as decorative 5×7 dot digits alongside readable text, a cream focus ring that never looks like the amber selection, and — only where the app already counts things — "1 tick = 1 item" bars. Use only when the user asks for 標示盤, L案 or l-signage by name for a new or existing screen. Do not use for generic dark themes, railway or airport themes, dashboards in general, other design styles (糸の交点, 折本, 二色刷り, 汀線), or unrelated coding.
 license: MIT
 compatibility: Plain HTML/CSS (optionally JS). Works offline and in closed networks; no CDN, web font or external API is required.
 metadata:
@@ -12,7 +12,7 @@ metadata:
 
 駅や窓口の案内表示（標示盤）の「暗い盤面に、今の状態だけを点灯させる」考え方に**着想した独自のデザイン**（名称は仮称）を、Web 画面に適用する。特定の鉄道・空港・メーカーの表示器の再現や、公式のデザインシステムではない。依頼者や画面にもそう説明しない。
 
-核は**「暗い盤面を区画に分け、今の状態だけを琥珀で点灯させる」**こと。琥珀は現在地（選んだ状態・選んだ行と詳細・現在の手順・主操作）だけに使い、見栄えのために広げない。ドット文字は装飾で、数値は必ず読める文字でも1回だけ置く。
+核は**「暗い盤面を区画に分け、今の状態だけを琥珀で点灯させる」**こと。琥珀は現在地（選んだ状態・選んだ行と詳細・現在の手順・主操作）だけに使い、見栄えのために広げない。ドット文字は**任意の装飾**で、使うときも数値は読める文字で1回だけ置く。時計・タイマーなど、数値そのものを読ませる主な表示では使わなくてよい。
 
 ## 使う場面
 
@@ -24,6 +24,8 @@ metadata:
 ## 手順
 
 1. **対象を確認する。** 技術スタック、既存の CSS、画面の目的と主要操作、状態の種類と件数の規模、入力の検証と保存、IME で入力する欄、画面遷移、権限、キーボード操作（矢印キー・Tab）と、絞り込み・開閉・エラー後のフォーカス。利用する環境（明るい事務室で長時間使うか、印刷するか）。動作・データ・保存・URL・ルーティングは変えない。
+   - 既存のアプリに試すときは、依頼がない限り**現行のデザインを標準のまま残し**、この Skill を選べる追加のテーマとして入れる（明示的に置き換えを頼まれた場合や新しいアプリは別）。テーマを切り替える仕組みが既になく、切替の UI も頼まれていないなら、勝手に作らず依頼者に確かめる。切替を頼まれたら、標準を初期値にし、選んだテーマの保存・既存の明暗の配色モード・データ・主要操作・URL を保ち、テーマの CSS の範囲を分ける。
+   - Skill のコードや素材（`tokens.css` など）を取り込むときは、MIT の著作権表示と許諾文の全文（この Skill の `LICENSE`）を、アプリの配布物にも残す（1つの HTML ならコメント、静的サイトなら配布するファイルなど）。アプリ全体のライセンスは変えない。
 2. **規則と部品を選ぶ。** [references/design-principles.md](references/design-principles.md) の判断表で、対象の業務にある部品だけを選ぶ（状態の盤面・選んだ行と詳細・手順のフォーム・ドット文字・目盛り）。**業務にない KPI・目盛り・盤面の区画は足さない。**
 3. **トークンと描画関数を入れる。** [assets/tokens.css](assets/tokens.css) を取り込む（コピーしてよい）。ドット文字を使うなら [assets/dot-digits.js](assets/dot-digits.js) を使うか、同じ字形で書き直す。既存の変数・クラスと衝突するなら、接頭辞を変えるか画面のルート要素に範囲を限る。
    - `tokens.css` は `:root` に変数を定義している（`color-scheme: dark` も含む）。そのまま全体に読み込むと、アプリのほかの画面にも効く。適用する画面のルート要素に範囲を移すか、必要な変数だけを取り込む。
@@ -33,9 +35,9 @@ metadata:
 
 ## 自己点検
 
-- [ ] 琥珀は現在地（選んだ状態・選んだ行と直後の詳細・現在の手順・主操作）だけ。ほかの区画は暗い面の明るさの違いと継ぎ目で分けている。
+- [ ] 琥珀は現在地（選んだ状態・選んだ行と直後の詳細・現在の手順・主操作）だけ。ほかの区画は暗い面の明るさの違いと継ぎ目で分けている。時刻・残り時間などの主な数値を、それだけの理由で琥珀にしていない。
 - [ ] 状態の盤面は本物のラジオ（または既存の部品）で、選択は琥珀の面に加えて ✓・文字・`checked` で分かる。描き直しでラジオを作り直さず、矢印キーで続けて選べる。
-- [ ] ドット文字は `aria-hidden` の装飾で、同じ数値が読める文字として1回だけある。1桁は 0 ではなく消灯の桁でそろえる。3桁以上や狭い幅で入らないときは、縮める・普通の数字にする・省く。
+- [ ] ドット文字は使わなくてよい。使う場合は `aria-hidden` の装飾で、同じ数値が読める文字として1回だけある。1桁は 0 ではなく消灯の桁でそろえる。3桁以上や狭い幅で入らないとき、時計・タイマーのように数値を読ませる主な表示や頻繁に変わる値では、普通の数字にするか省く。普通の数字で見せた値を、ドット文字でもう一度並べていない。
 - [ ] 選んだ行の琥珀が、直後の詳細の左の琥珀の帯につながる。開閉は文言と `aria-expanded` でも分かり、開くと詳細へ、閉じると元のボタンへフォーカスが戻る。
 - [ ] フォームは、左の列の現在の手順（琥珀の区画・ドット文字・文字）から琥珀の縦の罫が章名へ枝分かれし、下段の「次の手順」と主操作が線でつながる。狭い幅では手順 → 入力の順に縦に並び、DOM と Tab の順も同じ。
 - [ ] フォーカスは生成りの外枠で、琥珀の区画の上では濃い色（`--ls-ink`）の外枠になる。エラーの欄でも外枠が見える（エラーの印は外枠ではなく影や枠線にする）。
@@ -48,6 +50,6 @@ metadata:
 
 ## 報告するときの注意
 
-- 参照したファイル（この SKILL.md、references、assets）と、対象に合わせて変えた点・使わなかった部品を書く。
+- 参照したファイル（この SKILL.md、references、assets）と、対象に合わせて変えた点・使わなかった部品とその理由を書く。Skill の部品をすべて入れることより、アプリの目的・読みやすさ・操作のしやすさを優先し、既存の機能にない部品は足さない。
 - 確かめていないこと（スクリーンリーダー、実機の IME、別ブラウザ、実際の OS の強制カラー、明るい部屋での長時間の利用、印刷）は「未確認」と書く。
 - 見やすさ・業務効率・アクセシビリティ基準への適合を、確かめずに断定しない。
