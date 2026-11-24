@@ -73,7 +73,7 @@
 | **design-skills**（ここ） | 配布する Skill の**正本**。Skill の更新はここで行う |
 | [design-lab](https://github.com/YanTKYS/design-lab) | 13デザインの調査・比較サイト（[公開ページ](https://yantkys.github.io/design-lab/)）と、Skill を作ったときの固定の適用見本・検証記録の正本 |
 
-Skill は design-lab の `skills/` から移行しました。形式は [Agent Skills の仕様](https://agentskills.io/specification)（`SKILL.md` と任意の `references/`・`assets/`）に合わせています。
+Skill の元になったデザインと、Skill を作ったときの見本は design-lab にあります。形式は [Agent Skills の仕様](https://agentskills.io/specification)（`SKILL.md` と任意の `references/`・`assets/`）に合わせています。
 
 ## 導入する
 
@@ -150,7 +150,7 @@ Copy-Item -Path $src -Destination $dest -Recurse -Force
 
 ### 既存のアプリに試すとき
 
-これまでの適用の検証で採った進め方です（各 `SKILL.md` の手順にも短く書いてあります）。
+既存のアプリに適用するときの進め方です（各 `SKILL.md` の手順にも短く書いてあります）。
 
 - 依頼がない限り、**現行のデザインを標準のまま残し**、Skill を選べる追加のテーマとして試します（明示的に置き換えを頼む場合や、新しいアプリは別）。依頼していないテーマの切替機能は、エージェントに勝手に作らせません。
 - テーマの切替を頼む場合は、標準を初期値にし、選んだテーマの保存、既存の明暗の配色モード、データ・主要操作・URL を保ち、テーマの CSS の範囲を分けるよう伝えます。
@@ -167,19 +167,24 @@ git clone --branch v0.1.0 https://github.com/YanTKYS/design-skills.git
 ```
 
 - 版番号は、取った配布版の目安です。コピー先で変えた内容が配布版と同じであることや、新しい版が出たことの通知までは保証しません。
+- 版ごとの変更は [CHANGELOG.md](CHANGELOG.md) にまとめます。この README と各 Skill の文書は今の使い方と仕様だけを書き、変更の経緯は CHANGELOG、詳しい議論と確認の記録は Issue・プルリクエストに残します。
 
 ## 検証の状況
 
 ### 確かめたこと
 
 - **Agent Skills の形式**（[scripts/validate-skills.py](scripts/validate-skills.py)。プルリクエストと `main` への push のたびに GitHub Actions で実行）：`skills/` にある Skill をフォルダーごと一時フォルダーへ1つずつコピーし、`SKILL.md` の frontmatter が実際の YAML パーサー（PyYAML）で読めること、`name` とフォルダー名の一致・`name` の文字種・`description` の長さなどの仕様上の制約、`references/`・`assets/` への相対リンクと本文で挙げたアセットが Skill のフォルダーの中に実在すること、フォルダーの中の `LICENSE` がリポジトリ直下の `LICENSE` と同じ内容で、frontmatter の `license` が `MIT` であること。あわせて、この README の「デザインを選ぶ」に載せた Skill と `skills/` のフォルダーが過不足なく一致すること（フォルダーだけ追加して掲載を忘れた場合、掲載したままフォルダーを消した場合はエラー）。手元では `pip install -r scripts/requirements.txt` のあと `python scripts/validate-skills.py` で同じ検査ができます（`scripts/` と `.github/` は検査用で、Skill のフォルダーにはコピーしません）。
-- **独立したセッションでの適用（5つとも）**：Skill を書いたのとは別のセッションが、Skill をデザインの資料として適用した例です。どれも、依頼の中で Skill を渡して（名指しして）読ませたもので、エージェントが Skill を自動で見つけて選んだかの検証ではありません。5つとも1件以上の実績がそろいましたが、どの画面・エージェント・ブラウザでも同じように適用できることを保証するものではありません。
-  - `okinawa-thread-ui`：別の Codex のセッションが、2つのアプリに適用しました（[markdown-library PR #11](https://github.com/YanTKYS/markdown-library/pull/11)、[okinawa-watch PR #12](https://github.com/YanTKYS/okinawa-watch/pull/12)。どちらもマージ済み）。
-  - `j-risograph-ui`：Mistral Vibe Code が、この Skill を clone して読み、kanban の**試験用のファイル** `iKanbanPilot.html` に追加のテーマとして適用しました（[kanban PR #18](https://github.com/YanTKYS/kanban/pull/18)。マージ済みの PoC）。実用版のアプリ全体への適用ではありません。
-  - 次の3件は、Mistral Vibe Code が v0.1.0 の Skill を渡されて適用したものです（どれもマージ済み）。どれも、現行のデザインを標準のテーマとして残し、画面の選択欄で Skill のテーマに切り替え、選んだテーマをブラウザーに保存する方式です。MIT の許諾文は、アプリのファイルのコメントに入れています。
-    - `l-signage-ui`：時計・タイマーのアプリ（[clock PR #35](https://github.com/YanTKYS/clock/pull/35)）。暗い盤面・琥珀の現在地（選んだモード・動作中のタイマー・主操作）・生成りのフォーカスを採用。最初に足したドット文字が主な数字と重なり、同じ数字を二重に見せたため外しました。時刻の数字は琥珀にせず、手順の区画・目盛り・詳細の帯は業務にないため使っていません。
-    - `h-prime-ui`：経過日数を記録するアプリ（[since PR #9](https://github.com/YanTKYS/since/pull/9)）。生成りの地・傾いた面・右から左の順・葡萄色の選択を採用し、件数や名前が長いときは縦組みの面を使わない。面ごとに経過日数と記録のボタンの位置がずれた点と、面の切り抜きでフォーカスの枠が切れた点を、面の中の領域の分け方と余白で直しました。見開きのフォームは、フォームが短いため使っていません。
-    - `k-shoreline-ui`：開発ログの閲覧サイト（[devlog PR #32](https://github.com/YanTKYS/devlog/pull/32)）。日付の見出しを陸、その日の記録のカード群を海として面でつなぎ、既存のタブと今日・昨日の選択を陸の面と濃い緑の下線で示しました。詳細の列・指標・推移のグラフ・フォームは、業務にないため作っていません。
+- **独立したセッションでの適用（5つとも）**：Skill を書いたのとは別のセッションが、Skill をデザインの資料として適用した例です（どれもマージ済み）。どれも依頼の中で Skill を渡して（名指しして）読ませたもので、エージェントが Skill を自動で見つけて選ぶかの検証ではありません。どの画面・エージェント・ブラウザでも同じように適用できることを保証するものでもありません。
+
+  | Skill | 適用先 | エージェント | 適用の形 |
+  | --- | --- | --- | --- |
+  | okinawa-thread-ui | [markdown-library PR #11](https://github.com/YanTKYS/markdown-library/pull/11)、[okinawa-watch PR #12](https://github.com/YanTKYS/okinawa-watch/pull/12) | Codex | アプリの見た目に適用 |
+  | j-risograph-ui | [kanban PR #18](https://github.com/YanTKYS/kanban/pull/18) | Mistral Vibe Code | **試験用のファイル**（`iKanbanPilot.html`）の追加のテーマ。実用版のアプリ全体ではない |
+  | h-prime-ui | [since PR #9](https://github.com/YanTKYS/since/pull/9) | Mistral Vibe Code（v0.1.0） | 標準のテーマを残し、選べる追加のテーマ |
+  | k-shoreline-ui | [devlog PR #32](https://github.com/YanTKYS/devlog/pull/32) | Mistral Vibe Code（v0.1.0） | 標準のテーマを残し、選べる追加のテーマ |
+  | l-signage-ui | [clock PR #35](https://github.com/YanTKYS/clock/pull/35) | Mistral Vibe Code（v0.1.0） | 標準のテーマを残し、選べる追加のテーマ |
+
+  採用した部品・使わなかった部品とその理由は、それぞれの PR に書いてあります。
 - **Skill を書いた本人による適用見本（5つとも）**：Skill を書いた同じ作業の中で、比較サイトにない別の業務に当てはめた見本です。作り手が原本の実装を知っているため、**独立した適用の評価ではありません**。見本と検証記録は design-lab にあります。
 
 | Skill | 見本（design-lab） | 検証記録 |
